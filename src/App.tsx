@@ -1,33 +1,32 @@
 import { useEffect, useState } from "react";
 import Card from "./components/Card";
-import {
-	CardsContainer,
-	Container,
-	Controls,
-	Header,
-	InsertButton,
-} from "./styles";
-import { getList, insertPerson } from "./service/api";
+import { Container, Controls, Header, InsertButton } from "./styles";
+import { getList, insertPerson, Person } from "./service/api";
 import Input from "./components/Input";
 import Select from "./components/Select";
+import "./styles.css";
+import CardsContainer from "./components/CardsContainer";
 
 function App() {
 	const [name, setName] = useState("");
 	const [age, setAge] = useState(0);
+	const [list, setList] = useState<Person[]>([]);
 
 	async function loadList() {
 		const list = await getList();
-		list.map((person) => console.log(person.name));
+		setList(list);
 	}
 
 	async function insertHandler() {
 		const list = await insertPerson({ name, age });
-		list.map((person) => console.log(person.name));
+		setList(list);
 	}
+
+	function splitToGroup() {}
 
 	useEffect(() => {
 		loadList();
-	});
+	}, []);
 	return (
 		<Container>
 			<Header>
@@ -35,18 +34,17 @@ function App() {
 					label="Nome"
 					id="name"
 					value={name}
-					onChange={(event) => setName("" + event.currentTarget.nodeValue)}
+					onChange={(event) => setName(event.target.value)}
 				/>
 				<Input
 					type="number"
 					label="Idade"
 					value={age}
 					id="age"
-					onChange={(event) =>
-						setAge(parseInt("" + event.currentTarget.nodeValue) || 0)
-					}
+					min={0}
+					onChange={(event) => setAge(parseInt(event.target.value))}
 				/>
-				<InsertButton> Inserir </InsertButton>
+				<InsertButton onClick={() => insertHandler()}> Inserir </InsertButton>
 			</Header>
 			<Controls>
 				<Select
@@ -59,12 +57,7 @@ function App() {
 					label="Ordenar por"
 				/>
 			</Controls>
-			<CardsContainer>
-				<Card title="Crianças"></Card>
-				<Card title="Adolescentes"></Card>
-				<Card title="Adultos"></Card>
-				<Card title="Idosos"></Card>
-			</CardsContainer>
+			<CardsContainer people={list} name="teste" />
 		</Container>
 	);
 }

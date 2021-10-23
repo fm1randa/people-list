@@ -42,10 +42,3 @@ export const Controls = styled.div`
 	padding: 10px 0;
 	column-gap: 5px;
 `;
-
-export const CardsContainer = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	column-gap: 20px;
-`;

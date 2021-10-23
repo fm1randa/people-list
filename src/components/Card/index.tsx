@@ -1,10 +1,23 @@
-import { Container, List, Title } from "./styles";
+import { Person } from "../../service/api";
+import { Container, List, PersonElement, Title } from "./styles";
 
-export default function Card({ title }: { title: string }) {
+export default function Card({
+	title,
+	people,
+}: {
+	title: string;
+	people?: Person[];
+}) {
 	return (
 		<Container>
 			<Title> {title} </Title>
-			<List />
+			<List>
+				{people?.map((person) => (
+					<PersonElement>
+						{person.name} - {person.age} anos
+					</PersonElement>
+				))}
+			</List>
 		</Container>
 	);
 }

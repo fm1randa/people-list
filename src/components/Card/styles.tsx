@@ -18,3 +18,5 @@ export const Title = styled.span`
 export const List = styled.ul`
 	width: 100%;
 `;
+
+export const PersonElement = styled.li``;
