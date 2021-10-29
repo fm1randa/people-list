@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import Card from "./components/Card";
 import { Container, Controls, Header, InsertButton } from "./styles";
-import { getList, insertPerson, Person } from "./service/api";
+import { getList, insertPerson, InsertedPerson } from "./service/api";
 import Input from "./components/Input";
 import Select from "./components/Select";
 import "./styles.css";
@@ -10,7 +9,7 @@ import CardsContainer from "./components/CardsContainer";
 function App() {
 	const [name, setName] = useState("");
 	const [age, setAge] = useState(0);
-	const [list, setList] = useState<Person[]>([]);
+	const [list, setList] = useState<InsertedPerson[]>([]);
 
 	async function loadList() {
 		const list = await getList();
@@ -21,8 +20,6 @@ function App() {
 		const list = await insertPerson({ name, age });
 		setList(list);
 	}
-
-	function splitToGroup() {}
 
 	useEffect(() => {
 		loadList();

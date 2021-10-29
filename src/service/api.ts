@@ -6,19 +6,28 @@ export const api = axios.create({
 	baseURL,
 });
 
-export type Person = {
-	id?: number;
+type GroupType = {
+	id: number;
+	name: string;
+};
+
+export type InsertedPerson = {
+	id: number;
 	name: string;
 	age: number;
-	group?: string;
+	group: GroupType;
+};
+export type ToBeInsertedPerson = {
+	name: string;
+	age: number;
 };
 
 export async function getList() {
-	const { data: list } = await api.get<Person[]>(`/list`);
+	const { data: list } = await api.get<InsertedPerson[]>(`/list`);
 	return list;
 }
 
-export async function insertPerson(person: Person) {
-	const { data: list } = await api.post<Person[]>(`/list`, person);
+export async function insertPerson(person: ToBeInsertedPerson) {
+	const { data: list } = await api.post<InsertedPerson[]>(`/list`, person);
 	return list;
 }

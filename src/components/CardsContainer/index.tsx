@@ -1,15 +1,18 @@
-import { Person } from "../../service/api";
+import { InsertedPerson } from "../../service/api";
 import Card from "../Card";
 import { Container } from "./styles";
 
 type CardsContainerProps = {
-	people: Person[];
+	people: InsertedPerson[];
 	name: string;
 };
 
 export default function CardsContainer({ people, name }: CardsContainerProps) {
 	const groups = people.map((person) => person.group);
-	const uniqueGroups = Array.from(new Set(groups));
+
+	groups.sort((a, b) => a.id - b.id);
+
+	const uniqueGroups = Array.from(new Set(groups.map((group) => group.name)));
 	return (
 		<Container>
 			{uniqueGroups.map(
@@ -17,7 +20,7 @@ export default function CardsContainer({ people, name }: CardsContainerProps) {
 					group && (
 						<Card
 							title={group}
-							people={people.filter((person) => person.group === group)}
+							people={people.filter((person) => person.group?.name === group)}
 						/>
 					)
 			)}

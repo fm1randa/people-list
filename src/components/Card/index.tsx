@@ -1,4 +1,4 @@
-import { Person } from "../../service/api";
+import { InsertedPerson } from "../../service/api";
 import { Container, List, PersonElement, Title } from "./styles";
 
 export default function Card({
@@ -6,7 +6,7 @@ export default function Card({
 	people,
 }: {
 	title: string;
-	people?: Person[];
+	people?: InsertedPerson[];
 }) {
 	return (
 		<Container>
