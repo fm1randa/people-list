@@ -1,15 +1,32 @@
 import { useEffect, useState } from "react";
-import { Container, Controls, Header, InsertButton } from "./styles";
-import { getList, insertPerson, InsertedPerson } from "./service/api";
-import Input from "./components/Input";
-import Select from "./components/Select";
 import "./styles.css";
+import { Container, Controls, Header, InsertButton } from "./components/styles";
+import Input from "./components/Input";
+import SortInput from "./components/SortInput";
 import CardsContainer from "./components/CardsContainer";
+import {
+	getList,
+	insertPerson,
+	InsertedPerson,
+	GroupType,
+} from "./service/api";
+
+type SortAttribute = "name" | "age";
+export type CardType = {
+	id: number;
+	title: string;
+	people: InsertedPerson[];
+};
 
 function App() {
 	const [name, setName] = useState("");
-	const [age, setAge] = useState(0);
+	const [age, setAge] = useState<number | "">("");
 	const [list, setList] = useState<InsertedPerson[]>([]);
+	const [cards, setCards] = useState<CardType[]>([]);
+	const [orderByDesc, setOrderByDesc] = useState(false);
+	const [sortAttribute, setSortAttribute] = useState<SortAttribute>("name");
+
+	const invalidChars = ["-", "+", "e"];
 
 	async function loadList() {
 		const list = await getList();
@@ -17,13 +34,52 @@ function App() {
 	}
 
 	async function insertHandler() {
+		if (name === "") {
+			return alert("Uma pessoa tem que ter um nome! :P");
+		}
+		if (age === "") {
+			return alert("Uma pessoa tem que ter uma idade! :P");
+		}
 		const list = await insertPerson({ name, age });
 		setList(list);
 	}
 
 	useEffect(() => {
+		function sortHandler(people: InsertedPerson[]) {
+			people.sort((a, b) => {
+				return orderByDesc
+					? a[sortAttribute] < b[sortAttribute]
+						? 1
+						: -1
+					: a[sortAttribute] > b[sortAttribute]
+					? 1
+					: -1;
+			});
+		}
+
+		const groups = list.map((person) => person.group);
+
+		const uniqueGroupIDs = Array.from(new Set(groups.map((group) => group.id)));
+
+		const newCards = uniqueGroupIDs.map((id) => {
+			const group = groups.find((group) => group.id === id) as GroupType;
+			const people = list.filter((person) => person.group.id === group.id);
+			sortHandler(people);
+			return {
+				id: group.id,
+				title: group.name,
+				people,
+			};
+		});
+
+		newCards.sort((a, b) => a.id - b.id);
+		setCards(newCards);
+	}, [list, orderByDesc, sortAttribute]);
+
+	useEffect(() => {
 		loadList();
 	}, []);
+
 	return (
 		<Container>
 			<Header>
@@ -32,6 +88,11 @@ function App() {
 					id="name"
 					value={name}
 					onChange={(event) => setName(event.target.value)}
+					onKeyDown={(event) => {
+						if (event.key === "Enter") {
+							insertHandler();
+						}
+					}}
 				/>
 				<Input
 					type="number"
@@ -39,22 +100,37 @@ function App() {
 					value={age}
 					id="age"
 					min={0}
-					onChange={(event) => setAge(parseInt(event.target.value))}
+					onKeyDown={(event) => {
+						if (invalidChars.includes(event.key)) {
+							event.preventDefault();
+						}
+						if (event.key === "Enter") {
+							insertHandler();
+						}
+					}}
+					onChange={(event) => {
+						if (event.target.value === "") return setAge(event.target.value);
+						const parsed = parseInt(event.target.value);
+						return setAge(parsed);
+					}}
 				/>
 				<InsertButton onClick={() => insertHandler()}> Inserir </InsertButton>
 			</Header>
 			<Controls>
-				<Select
+				<SortInput
 					options={[
-						{ id: "1", name: "Nome ASC" },
-						{ id: "2", name: "Nome DESC" },
-						{ id: "3", name: "Idade ASC" },
-						{ id: "4", name: "Idade DESC" },
+						{ id: "name", name: "Nome" },
+						{ id: "age", name: "Idade" },
 					]}
 					label="Ordenar por"
+					orderByDesc={orderByDesc}
+					toggleOrderByDesc={() => setOrderByDesc(!orderByDesc)}
+					onChange={(event) =>
+						setSortAttribute(event.target.value as SortAttribute)
+					}
 				/>
 			</Controls>
-			<CardsContainer people={list} name="teste" />
+			<CardsContainer cards={cards} />
 		</Container>
 	);
 }

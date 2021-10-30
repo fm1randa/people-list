@@ -12,8 +12,8 @@ export default function Card({
 		<Container>
 			<Title> {title} </Title>
 			<List>
-				{people?.map((person) => (
-					<PersonElement>
+				{people?.map((person, index) => (
+					<PersonElement key={index}>
 						{person.name} - {person.age} anos
 					</PersonElement>
 				))}

@@ -1,28 +1,17 @@
-import { InsertedPerson } from "../../service/api";
+import { CardType } from "../../App";
 import Card from "../Card";
 import { Container } from "./styles";
 
 type CardsContainerProps = {
-	people: InsertedPerson[];
-	name: string;
+	cards: CardType[];
 };
 
-export default function CardsContainer({ people, name }: CardsContainerProps) {
-	const groups = people.map((person) => person.group);
-
-	groups.sort((a, b) => a.id - b.id);
-
-	const uniqueGroups = Array.from(new Set(groups.map((group) => group.name)));
+export default function CardsContainer({ cards }: CardsContainerProps) {
 	return (
 		<Container>
-			{uniqueGroups.map(
-				(group) =>
-					group && (
-						<Card
-							title={group}
-							people={people.filter((person) => person.group?.name === group)}
-						/>
-					)
+			{cards.map(
+				(card, index) =>
+					card && <Card key={index} title={card.title} people={card.people} />
 			)}
 		</Container>
 	);

@@ -20,7 +20,7 @@ export const Header = styled.div`
 export const InsertButton = styled.button`
 	border: none;
 	color: white;
-	height: 40px;
+	height: 44px;
 	width: 100px;
 	background-color: #00bec8;
 	border-radius: 8px;

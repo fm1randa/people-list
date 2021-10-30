@@ -6,7 +6,7 @@ export const api = axios.create({
 	baseURL,
 });
 
-type GroupType = {
+export type GroupType = {
 	id: number;
 	name: string;
 };
