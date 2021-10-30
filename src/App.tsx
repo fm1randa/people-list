@@ -34,13 +34,14 @@ function App() {
 	}
 
 	async function insertHandler() {
-		if (name === "") {
+		const sanitizedName = name.trim();
+		if (sanitizedName === "") {
 			return alert("Uma pessoa tem que ter um nome! :P");
 		}
 		if (age === "") {
 			return alert("Uma pessoa tem que ter uma idade! :P");
 		}
-		const list = await insertPerson({ name, age });
+		const list = await insertPerson({ name: sanitizedName, age });
 		setList(list);
 	}
 
